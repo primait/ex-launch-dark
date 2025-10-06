@@ -20,9 +20,8 @@ defmodule ExLaunchDark.LDContextBuilder do
   end
 
   defp set_context_attributes(context, attributes) do
-    Enum.each(attributes, fn {attr_key, attr_value} ->
-      :ldclient_context.set(attr_key, attr_value, context)
+    Enum.reduce(attributes, context, fn {attr_key, attr_value}, acc ->
+      :ldclient_context.set(attr_key, attr_value, acc)
     end)
-    context
   end
 end
