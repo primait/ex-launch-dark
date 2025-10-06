@@ -18,9 +18,9 @@ defmodule ExLaunchDark.Client do
   defp validate_config(ld_config), do: ld_config
 
   defp start_ld_client(ld_config, project_id) do
-    %{sdk_key: sdk_key, base_uri: base_uri, options: _options} = ld_config
-#    ld_options = Map.merge(options, %{base_uri: "https://app.launchdarkly.com"})
-    case :ldclient.start_instance(String.to_charlist(sdk_key), project_id, %{base_uri: String.to_charlist(base_uri)}) do
+    %{sdk_key: sdk_key, base_uri: base_uri, options: options} = ld_config
+    instance_options = options |> Map.put(:base_uri, String.to_charlist(base_uri))
+    case :ldclient.start_instance(String.to_charlist(sdk_key), project_id, instance_options) do
       :ok ->
         Logger.info("LaunchDarkly client started for project #{project_id} with SDK key: #{sdk_key}")
         :client_ready
