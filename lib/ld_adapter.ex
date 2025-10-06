@@ -4,13 +4,7 @@ defmodule ExLaunchDark.LDAdapter do
   """
   require Logger
 
-  alias ExLaunchDark.Client
   alias ExLaunchDark.LDContextBuilder
-
-  @spec init(ExLaunchDark.LDConfig.t()) :: Client.client_status
-  def init(ld_config) do
-    Client.init(ld_config)
-  end
 
   @doc """
   Retrieves the value of a feature flag for a given context.

@@ -15,7 +15,7 @@ defmodule ExLaunchDark.Application do
       {Task, fn ->
         case ExLaunchDark.Client.init(ld_config) do
           :client_ready -> :ok
-          :client_error -> Logger.error("LaunchDarkly client failed to initialize")
+          :client_error -> :error
         end
       end}
     ]
