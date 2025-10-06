@@ -26,6 +26,19 @@ defmodule ExLaunchDark.LDAdapter do
     end
   end
 
+  @spec track_event(atom(), String.t(), ExLaunchDark.LDContextStruct, :ldclient_event.event_data()) :: :ok
+  def track_event(project_id, event_name, ld_context, event_data \\ %{}) do
+    ld_context = LDContextBuilder.build_context(ld_context)
+    :ldclient.track(event_name, ld_context, event_data, project_id)
+  end
+
+  @spec get_all_flags(atom(), ExLaunchDark.LDContextStruct) :: :ldclient_eval.feature_flags_state()
+  def get_all_flags(project_id, ld_context) do
+    ld_context
+    |> LDContextBuilder.build_context(ld_context)
+    |> :ldclient.all_flags_state(project_id)
+  end
+
   defp get_value_reason({reason, _, _}), do: reason
   defp get_value_reason(reason) when is_atom(reason), do: reason
   defp get_value_reason({reason}), do: reason
