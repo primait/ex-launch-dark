@@ -21,7 +21,7 @@ defmodule ExLaunchDark.Client do
 #    ld_options = Map.merge(options, %{base_uri: "https://app.launchdarkly.com"})
     case :ldclient.start_instance(String.to_charlist(sdk_key), :default, %{base_uri: String.to_charlist(base_uri)}) do
       :ok ->
-        Logger.debug("LaunchDarkly client started with SDK key: #{sdk_key}")
+        Logger.notice("LaunchDarkly client started with SDK key: #{sdk_key}")
         :client_ready
       other ->
         Logger.error("Failed to start LaunchDarkly client with SDK key: #{sdk_key} with error: #{inspect(other)}")

@@ -19,11 +19,9 @@ defmodule ExLaunchDark.LDAdapter do
     Logger.debug("LDContext: #{inspect(ld_context)}")
     case :ldclient.variation_detail(flag_key, ld_context, default_value, :default) do
       {_, _default, {:error, reason}} ->
-#        Client.terminate()
         {:error, reason}
 
       {_variation_idx, value, details} ->
-#        Client.terminate()
         {:ok, value, get_value_reason(details)}
     end
   end
