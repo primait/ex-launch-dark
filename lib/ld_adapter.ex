@@ -9,15 +9,15 @@ defmodule ExLaunchDark.LDAdapter do
   @doc """
   Retrieves the value of a feature flag for a given context.
   """
-  @spec get_feature_flag_value(String.t(), ExLaunchDark.LDContextStruct, any()) :: {:ok, any(), any()} | {:error, any()}
-  def get_feature_flag_value(flag_key, ld_context, default_value \\ false) do
+  @spec get_feature_flag_value(atom(), String.t(), ExLaunchDark.LDContextStruct, any()) :: {:ok, any(), any()} | {:error, any()}
+  def get_feature_flag_value(project_id, flag_key, ld_context, default_value \\ false) do
     LDContextBuilder.build_context(ld_context)
-    |> fetch_flag_value(flag_key, default_value)
+    |> fetch_flag_value(project_id, flag_key, default_value)
   end
 
-  defp fetch_flag_value(ld_context, flag_key, default_value) do
+  defp fetch_flag_value(ld_context, project_id, flag_key, default_value) do
     Logger.debug("LDContext: #{inspect(ld_context)}")
-    case :ldclient.variation_detail(flag_key, ld_context, default_value, :default) do
+    case :ldclient.variation_detail(flag_key, ld_context, default_value, project_id) do
       {_, _default, {:error, reason}} ->
         {:error, reason}
 
