@@ -23,7 +23,8 @@ defmodule ExLaunchDark.MixProject do
   defp deps do
     [
       {:ldclient, "~> 3.0", hex: :launchdarkly_server_sdk},
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:meck, "~> 0.9.2", only: :test}
     ]
   end
 end
