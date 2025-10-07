@@ -32,6 +32,21 @@ config :ex_launch_dark, :project_key_1, "sdk-xxxxx-yyyyy-zzzzzzz-11111"
 config :ex_launch_dark, :project_key_n, "sdk-xxxxx-yyyyy-zzzzzzz-22222"
 ```
 
+## Usage
+To start using the library main functions you can start playing with the `ExLaunchDark.LDAdapter` module.
+Which exposes some of the most common flag operations, like:
+
+```elixir
+# Retrieve the current value of any given feature flag 
+ld_ctx = %ExLaunchDark.LDContextStruct{key: "ctx_key_123", kind: "user"}
+case ExLaunchDark.LDAdapter.get_feature_flag_value(:project_key_1, "flag_foo", ld_ctx, false) do
+  {:ok, value, _reason} -> 
+    # All good, use the value
+  {:error, _default, reason} -> 
+    # Something went wrong, handle the error using given reason
+end
+```
+
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/ex_launch_dark>.
