@@ -31,17 +31,18 @@ defmodule ExLaunchDark.Application do
 
     {_, projects_ids} = projects
     {_, base_uri_value} = base_uri
+
     Enum.map(projects_ids, fn project ->
       sdk_key =
         Application.fetch_env!(:ex_launch_dark, project) ||
           raise "Missing SDK key config for project #{inspect(project)}"
 
       {project,
-        %ExLaunchDark.LDConfig{
-          sdk_key: sdk_key,
-          base_uri: base_uri_value,
-          options: %{}
-        }}
+       %ExLaunchDark.LDConfig{
+         sdk_key: sdk_key,
+         base_uri: base_uri_value,
+         options: %{}
+       }}
     end)
   end
 

@@ -10,8 +10,12 @@ defmodule ExLaunchDark.LDContextBuilder do
     |> to_ld_context()
   end
 
-  defp validate_context(%{key: nil} = _context_struct), do: raise "Context Error: key cannot be nil"
-  defp validate_context(%{kind: nil} = _context_struct), do: raise "Context Error: kind cannot be nil"
+  defp validate_context(%{key: nil} = _context_struct),
+    do: raise("Context Error: key cannot be nil")
+
+  defp validate_context(%{kind: nil} = _context_struct),
+    do: raise("Context Error: kind cannot be nil")
+
   defp validate_context(context_struct), do: context_struct
 
   defp to_ld_context(%{key: key, kind: kind, attributes: attributes}) do
