@@ -10,22 +10,30 @@ defmodule ExLaunchDark.LDAdapter do
   Retrieves the value of a single feature flag for a given context.
   """
   @spec get_feature_flag_value(atom(), String.t(), ExLaunchDark.LDContextStruct, any()) ::
-          {:ok, any(), any()} | {:error, any()}
+          {:ok, any(), atom()} | {:error, any(), atom()} | {:null, any(), atom()}
   def get_feature_flag_value(project_id, flag_key, ld_context, default_value \\ false) do
     LDContextBuilder.build_context(ld_context)
     |> fetch_flag_value(project_id, flag_key, default_value)
   end
 
   defp fetch_flag_value(ld_context, project_id, flag_key, default_value) do
-    Logger.debug("LDContext: #{inspect(ld_context)}")
+    Logger.debug("Fetching flag: #{flag_key} with LDContext: #{inspect(ld_context)}")
 
-    case :ldclient.variation_detail(flag_key, ld_context, default_value, project_id) do
-      {_, _default, {:error, reason}} ->
-        {:error, reason}
+    :ldclient.variation_detail(flag_key, ld_context, default_value, project_id)
+    |> parse_flag_response(default_value)
+  end
 
-      {_variation_idx, value, details} ->
-        {:ok, value, get_value_reason(details)}
-    end
+  defp parse_flag_response({_, _, {:error, reason}}, default_value) do
+    Logger.error("Flag response error", [reason: inspect(reason)])
+    {:error, default_value, reason}
+  end
+  defp parse_flag_response({variation_idx, value, {reason, _, _}}, _default_value) do
+    Logger.debug("Flag response ok - variation: #{variation_idx}, value: #{inspect(value)}, reason: #{inspect(reason)}")
+    {:ok, value, reason}
+  end
+  defp parse_flag_response({_idx, _value, reason}, default_value) do
+    Logger.warning("Flag response mismatch", [reason: inspect(reason)])
+    {:null, default_value, reason}
   end
 
   @doc """
@@ -53,7 +61,4 @@ defmodule ExLaunchDark.LDAdapter do
     |> :ldclient.all_flags_state(project_id)
   end
 
-  defp get_value_reason({reason, _, _}), do: reason
-  defp get_value_reason(reason) when is_atom(reason), do: reason
-  defp get_value_reason({reason}), do: reason
 end

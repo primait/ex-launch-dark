@@ -6,7 +6,7 @@ defmodule ExLaunchDark.Client do
 
   @type client_status :: :client_ready | :client_error
 
-  @spec init(ExLaunchDark.LDConfig.t(), atom()) :: :client_status
+  @spec init(ExLaunchDark.LDConfig, atom()) :: client_status
   def init(ld_config, project_id) do
     ld_config
     |> validate_config()

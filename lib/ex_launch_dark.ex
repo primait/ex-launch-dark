@@ -24,15 +24,12 @@ defmodule ExLaunchDark.Application do
 
   defp build_projects_config do
     projects =
-      Application.fetch_env(:ex_launch_dark, :projects) || []
+      Application.get_env(:ex_launch_dark, :projects, [])
 
     base_uri =
-      Application.fetch_env(:ex_launch_dark, :base_uri) || "https://app.launchdarkly.com"
+      Application.get_env(:ex_launch_dark, :base_uri, "https://app.launchdarkly.com")
 
-    {_, projects_ids} = projects
-    {_, base_uri_value} = base_uri
-
-    Enum.map(projects_ids, fn project ->
+    Enum.map(projects, fn project ->
       sdk_key =
         Application.fetch_env!(:ex_launch_dark, project) ||
           raise "Missing SDK key config for project #{inspect(project)}"
@@ -40,7 +37,7 @@ defmodule ExLaunchDark.Application do
       {project,
        %ExLaunchDark.LDConfig{
          sdk_key: sdk_key,
-         base_uri: base_uri_value,
+         base_uri: base_uri,
          options: %{}
        }}
     end)
