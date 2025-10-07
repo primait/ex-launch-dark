@@ -3,7 +3,7 @@ defmodule ExLaunchDark.LDContextBuilder do
   Module for building LaunchDarkly context objects.
   """
 
-  @spec build_context(ExLaunchDark.LDContextStruct) :: :ldclient_context.single_context
+  @spec build_context(ExLaunchDark.LDContextStruct) :: :ldclient_context.single_context()
   def build_context(context_struct) do
     context_struct
     |> validate_context()
@@ -23,7 +23,8 @@ defmodule ExLaunchDark.LDContextBuilder do
     |> set_context_attributes(attributes)
   end
 
-  @spec set_context_attributes(:ldclient_context.single_context, map()) :: :ldclient_context.single_context
+  @spec set_context_attributes(:ldclient_context.single_context(), map()) ::
+          :ldclient_context.single_context()
   defp set_context_attributes(context, attributes) do
     Enum.reduce(attributes, context, fn {attr_key, attr_value}, acc ->
       :ldclient_context.set(attr_key, attr_value, acc)

@@ -24,15 +24,20 @@ defmodule ExLaunchDark.LDAdapter do
   end
 
   defp parse_flag_response({_, _, {:error, reason}}, default_value) do
-    Logger.error("Flag response error", [reason: inspect(reason)])
+    Logger.error("Flag response error", reason: inspect(reason))
     {:error, default_value, reason}
   end
+
   defp parse_flag_response({variation_idx, value, {reason, _, _}}, _default_value) do
-    Logger.debug("Flag response ok - variation: #{variation_idx}, value: #{inspect(value)}, reason: #{inspect(reason)}")
+    Logger.debug(
+      "Flag response ok - variation: #{variation_idx}, value: #{inspect(value)}, reason: #{inspect(reason)}"
+    )
+
     {:ok, value, reason}
   end
+
   defp parse_flag_response({_idx, _value, reason}, default_value) do
-    Logger.warning("Flag response mismatch", [reason: inspect(reason)])
+    Logger.warning("Flag response mismatch", reason: inspect(reason))
     {:null, default_value, reason}
   end
 
@@ -60,5 +65,4 @@ defmodule ExLaunchDark.LDAdapter do
     |> LDContextBuilder.build_context()
     |> :ldclient.all_flags_state(project_id)
   end
-
 end
