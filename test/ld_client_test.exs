@@ -48,7 +48,7 @@ defmodule ExLaunchDark.ClientTest do
       end)
 
       capture_log(fn ->
-         assert Client.init(config, :test_project) == :client_ready
+        assert Client.init(config, :test_project) == :client_ready
       end)
 
       :meck.unload(:ldclient)
