@@ -1,5 +1,6 @@
 defmodule ExLaunchDark.ClientTest do
   use ExUnit.Case
+  import ExUnit.CaptureLog
   alias ExLaunchDark.Client
   alias ExLaunchDark.LDConfig
 
@@ -30,7 +31,7 @@ defmodule ExLaunchDark.ClientTest do
   end
 
   describe "init integration" do
-    test "returns client_status atom" do
+    test "returns client_status ready" do
       config = %LDConfig{
         sdk_key: "sdk-test-key",
         base_uri: "https://app.launchdarkly.com",
@@ -46,8 +47,11 @@ defmodule ExLaunchDark.ClientTest do
         :ok
       end)
 
-      result = Client.init(config, :test_project)
-      assert result == :client_ready
+      capture_log(fn ->
+         assert Client.init(config, :test_project) == :client_ready
+      end)
+
+      :meck.unload(:ldclient)
     end
   end
 end
