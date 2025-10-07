@@ -3,7 +3,7 @@ defmodule ExLaunchDark.MixProject do
 
   def project do
     [
-      app: :elixir_launch_darkly,
+      app: :ex_launch_dark,
       version: "0.1.0",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
@@ -21,7 +21,7 @@ defmodule ExLaunchDark.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:dialyxir, "~> 1.4", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
 end
