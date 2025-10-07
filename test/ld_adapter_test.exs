@@ -8,9 +8,11 @@ defmodule ExLaunchDark.LDAdapterTest do
     test "OK response" do
       :meck.new(:ldclient, [:no_link])
 
-      :meck.expect(:ldclient, :variation_detail, fn flag_key, _, _, project_id ->
+      :meck.expect(:ldclient, :variation_detail, fn flag_key, ld_context, _default, project_id ->
         assert flag_key == "flag_foo"
         assert project_id == :test_project
+        assert :ldclient_context.get_kinds(ld_context) == ["user"]
+
         {1, "on", {:match_rule, :a, :b}}
       end)
 
@@ -31,9 +33,11 @@ defmodule ExLaunchDark.LDAdapterTest do
     test "Error response" do
       :meck.new(:ldclient, [:no_link])
 
-      :meck.expect(:ldclient, :variation_detail, fn flag_key, _, _, project_id ->
+      :meck.expect(:ldclient, :variation_detail, fn flag_key, ld_context, _default, project_id ->
         assert flag_key == "flag_foo"
         assert project_id == :test_project
+        assert :ldclient_context.get_kinds(ld_context) == ["user"]
+
         {:null, nil, {:error, :reason_name}}
       end)
 
