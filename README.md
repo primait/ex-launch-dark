@@ -47,6 +47,34 @@ case ExLaunchDark.LDAdapter.get_feature_flag_value(:project_key_1, "flag_foo", l
 end
 ```
 
+## Development
+In order run this project isolated, you need to ensure you have first installed manually the ``asdf`` 
+tool manager in your host machine, then run:
+
+```bash
+asdf install
+```
+
+which will install the required Erlang and Elixir versions as specified in the `.tool-versions` file.
+
+Then you can fetch the dependencies with:
+
+```bash
+mix deps.get
+mix deps.compile
+``` 
+
+### Application commands 
+In order to ease some of the common development tasks, you can use any of the "commands/tasks" 
+defined in the `mise.toml` file, like:
+
+```bash
+mise start 
+mise test
+mise code:check 
+mise code:format
+```
+
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/ex_launch_dark>.

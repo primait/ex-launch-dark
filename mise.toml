@@ -1,0 +1,39 @@
+[settings]
+idiomatic_version_file_enable_tools = ["python", "node"]
+# needed for `mise generate bootstrap`
+experimental = true
+
+[tools]
+# list of any project specific tools to install
+
+[tasks]
+############# individual tasks #############
+[tasks.install]
+description = "install any necessary toolsets and packages/libraries"
+run = ["{{mise_bin}} install", "asdf install"]
+
+[tasks."inf:start"]
+description = "start any necessary infrastructure"
+alias = "start"
+run = ["iex -S mix"]
+depends = ["install"]
+wait_for = ["install"]
+
+[tasks.quality]
+description = "check the quality of the code, docs, configuration files etc."
+depends = ["code:format", "code:check", "test:all"]
+
+[tasks."code:format"]
+description = "run formatters against the code, markdown docs, configuration files etc."
+run = ["mix format"]
+wait_for = ["inf:start"]
+
+[tasks."code:check"]
+description = "run static code analysis"
+run = ["mix dialyzer"]
+wait_for = ["inf:start"]
+
+[tasks."test:all"]
+description = "run all of the tests"
+alias = "test"
+run = ["mix test"]
