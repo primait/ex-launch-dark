@@ -28,14 +28,14 @@ defmodule ExLaunchDark.Client do
     case :ldclient.start_instance(String.to_charlist(sdk_key), project_id, instance_options) do
       :ok ->
         Logger.info(
-          "LaunchDarkly client started for project #{project_id} with SDK key: #{sdk_key}"
+          "LaunchDarkly client started for project #{project_id} with SDK key: #{sdk_key |> mask_sdk_key()}"
         )
 
         :client_ready
 
       other ->
         Logger.error(
-          "Failed to start LaunchDarkly client for project #{project_id} with SDK key: #{sdk_key} with error: #{inspect(other)}"
+          "Failed to start LaunchDarkly client for project #{project_id} with SDK key: #{sdk_key |> mask_sdk_key()} with error: #{inspect(other)}"
         )
 
         :client_error
@@ -46,5 +46,9 @@ defmodule ExLaunchDark.Client do
 
   def terminate(project_id) do
     :ldclient.stop_instance(project_id)
+  end
+
+  defp mask_sdk_key(sdk_key) do
+    String.slice(sdk_key, 0..2) <> "****" <> String.slice(sdk_key, -4..-1)
   end
 end
