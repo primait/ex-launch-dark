@@ -42,7 +42,4 @@ defmodule ExLaunchDark.Application do
        }}
     end)
   end
-
-  # Example public API
-  def hello, do: :world
 end
