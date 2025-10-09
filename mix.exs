@@ -14,14 +14,17 @@ defmodule ExLaunchDark.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      mod: {ExLaunchDark.Application, []}
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
+      {:ldclient, "~> 3.0", hex: :launchdarkly_server_sdk},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:meck, "~> 0.9.2", only: :test}
     ]
   end
 end
