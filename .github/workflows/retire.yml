@@ -41,4 +41,4 @@ jobs:
         env:
           HEX_AUTH_KEY: ${{ secrets.HEX_AUTH_KEY }}
       - run: mix hex.user whoami
-      - run: mix hex.retire telepoison "$VERSION" "$REASON" --message "$MESSAGE"
+      - run: mix hex.retire ex_launch_dark "$VERSION" "$REASON" --message "$MESSAGE"
