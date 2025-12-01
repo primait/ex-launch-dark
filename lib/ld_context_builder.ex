@@ -3,7 +3,7 @@ defmodule ExLaunchDark.LDContextBuilder do
   Module for building LaunchDarkly context objects.
   """
 
-  @spec build_context(ExLaunchDark.LDContextStruct) :: :ldclient_context.single_context()
+  @spec build_context(ExLaunchDark.LDContextStruct.t()) :: :ldclient_context.single_context()
   def build_context(context_struct) do
     context_struct
     |> validate_context()

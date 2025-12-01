@@ -4,7 +4,7 @@ defmodule ExLaunchDark.MixProject do
   def project do
     [
       app: :ex_launch_dark,
-      version: "1.0.0",
+      version: "1.0.1",
       elixir: "~> 1.18",
       start_permanent: Mix.env() == :prod,
       deps: deps()
@@ -24,7 +24,8 @@ defmodule ExLaunchDark.MixProject do
     [
       {:ldclient, "~> 3.0", hex: :launchdarkly_server_sdk},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:meck, "~> 0.9.2", only: :test}
+      {:meck, "~> 0.9.2", only: :test},
+      {:mix_bump, "~> 0.1.0", only: [:dev, :staging]}
     ]
   end
 end

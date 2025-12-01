@@ -10,7 +10,9 @@ by adding `ex_launch_dark` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ex_launch_dark, "~> 0.1.0"}
+    {:ex_launch_dark, "~> 0.1.0"},
+    # or using git source
+    {:ex_launch_dark, git: "url_to_repo", tag: "1.1.0"}
   ]
 end
 ```
@@ -73,6 +75,16 @@ mise start
 mise test
 mise code:check 
 mise code:format
+```
+
+## Release 
+
+You can bump the version directly in the `mix.exs` file, or by using any of next commands:
+
+```bash
+mix bump patch
+mix bump minor
+mix bump major
 ```
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
