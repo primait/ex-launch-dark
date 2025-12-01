@@ -5,7 +5,7 @@ defmodule ExLaunchDark.LDContextStruct do
   @enforce_keys [:key, :kind]
   defstruct key: nil, kind: nil, attributes: %{}
 
-  @type t() :: %LDContextStruct{
+  @type t() :: %__MODULE__{
           key: String.t(),
           kind: String.t(),
           attributes: map()
