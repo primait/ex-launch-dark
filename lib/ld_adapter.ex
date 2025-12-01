@@ -48,7 +48,7 @@ defmodule ExLaunchDark.LDAdapter do
   @spec track_event(
           atom(),
           String.t(),
-          %LDContextStruct{},
+          LDContextStruct.t(),
           :ldclient_event.event_data()
         ) :: :ok
   def track_event(project_id, event_name, ld_context, event_data \\ %{}) do
@@ -59,7 +59,7 @@ defmodule ExLaunchDark.LDAdapter do
   @doc """
   Retrieves the state of all feature flags for a given context.
   """
-  @spec get_all_flags(atom(), %LDContextStruct{}) ::
+  @spec get_all_flags(atom(), LDContextStruct.t()) ::
           :ldclient_eval.feature_flags_state()
   def get_all_flags(project_id, ld_context) do
     ld_context
