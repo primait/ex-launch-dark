@@ -10,7 +10,7 @@ defmodule ExLaunchDark.LDAdapter do
   @doc """
   Retrieves the value of a single feature flag for a given context.
   """
-  @spec get_feature_flag_value(atom(), String.t(), LDContextStruct.t(), any()) ::
+  @spec get_feature_flag_value(atom(), String.t(), %LDContextStruct{}, any()) ::
           {:ok, any(), atom()} | {:error, any(), atom()} | {:null, any(), atom()}
   def get_feature_flag_value(project_id, flag_key, ld_context, default_value \\ false) do
     LDContextBuilder.build_context(ld_context)
@@ -48,7 +48,7 @@ defmodule ExLaunchDark.LDAdapter do
   @spec track_event(
           atom(),
           String.t(),
-          LDContextStruct.t(),
+          %LDContextStruct{},
           :ldclient_event.event_data()
         ) :: :ok
   def track_event(project_id, event_name, ld_context, event_data \\ %{}) do
@@ -59,7 +59,7 @@ defmodule ExLaunchDark.LDAdapter do
   @doc """
   Retrieves the state of all feature flags for a given context.
   """
-  @spec get_all_flags(atom(), LDContextStruct.t()) ::
+  @spec get_all_flags(atom(), %LDContextStruct{}) ::
           :ldclient_eval.feature_flags_state()
   def get_all_flags(project_id, ld_context) do
     ld_context
