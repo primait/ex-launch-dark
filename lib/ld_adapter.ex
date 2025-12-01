@@ -10,7 +10,7 @@ defmodule ExLaunchDark.LDAdapter do
   @doc """
   Retrieves the value of a single feature flag for a given context.
   """
-  @spec get_feature_flag_value(atom(), String.t(), %LDContextStruct{}, any()) ::
+  @spec get_feature_flag_value(atom(), String.t(), any(), any()) ::
           {:ok, any(), atom()} | {:error, any(), atom()} | {:null, any(), atom()}
   def get_feature_flag_value(project_id, flag_key, ld_context, default_value \\ false) do
     LDContextBuilder.build_context(ld_context)
