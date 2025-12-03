@@ -6,8 +6,20 @@ defmodule ExLaunchDark.MixProject do
       app: :ex_launch_dark,
       version: "1.0.1",
       elixir: "~> 1.18",
+      package: package(),
       start_permanent: Mix.env() == :prod,
       deps: deps()
+    ]
+  end
+
+  def package do
+    [
+      description:
+        "ExLaunchDark is an integration library to perform common LaunchDarkly operations.",
+      name: "ex_launch_dark",
+      maintainer: ["prima.it"],
+      licenses: ["MIT"],
+      links: %{"Github" => "https://github.com/primait/ex-launch-dark"}
     ]
   end
 
