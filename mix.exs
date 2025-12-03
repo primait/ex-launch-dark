@@ -39,7 +39,7 @@ defmodule ExLaunchDark.MixProject do
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:meck, "~> 0.9.2", only: :test},
       {:mix_bump, "~> 0.1.0", only: [:dev, :staging]},
-      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
 
@@ -50,7 +50,7 @@ defmodule ExLaunchDark.MixProject do
         "LICENSE.md": [title: "License"]
       ],
       main: "readme",
-      source_url: "https://github.com/primait/ex-launch-dark",
+      source_url: "https://github.com/primait/ex-launch-dark"
     ]
   end
 end
