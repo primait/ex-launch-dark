@@ -11,6 +11,16 @@ defmodule ExLaunchDark.MixProject do
     ]
   end
 
+  def package do
+    [
+      description: "ExLaunchDark is an integration library to perform common LaunchDarkly operations.",
+      name: "ex_launch_dark",
+      maintainer: ["prima.it"],
+      licenses: ["MIT"],
+      links: %{"Github" => "https://github.com/primait/ex-launch-dark"}
+    ]
+  end
+
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
