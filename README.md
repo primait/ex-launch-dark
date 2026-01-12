@@ -82,6 +82,8 @@ mise code:format
 
 ## Release 
 
+### Bump the new version and push to GH
+
 To bump the version in the `mix.exs` file run one of the following:
 
 ```bash
@@ -91,6 +93,17 @@ mix bump major
 ```
 
 This can be done on the current branch/PR or, if the PR is particularly complex or there are multiple PRs, create a new branch for a new release.
+
+### Perform the actual release
+
+This project isn't integrated with `suite-py` yet so the release must be created manually:
+
+1. Go to https://github.com/primait/ex-launch-dark/releases
+2. Click "Draft a new release"
+3. Create a new tag that is the new version (e.g. if the new version is 1.1.3 then the tag is called "1.1.3")
+4. Create the release
+
+This will then kick off the build-and-release-to-hex workflow.
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
