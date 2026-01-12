@@ -82,7 +82,7 @@ mise code:format
 
 ## Release 
 
-You can bump the version directly in the `mix.exs` file, or by using any of next commands:
+You can bump the version directly in the `mix.exs` file. To do this, create a new branch, run any of next commands, and the push/approve the new PR:
 
 ```bash
 mix bump patch
