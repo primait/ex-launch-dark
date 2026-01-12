@@ -82,13 +82,15 @@ mise code:format
 
 ## Release 
 
-You can bump the version directly in the `mix.exs` file. To do this, create a new branch, run any of next commands, and the push/approve the new PR:
+To bump the version in the `mix.exs` file run one of the following:
 
 ```bash
 mix bump patch
 mix bump minor
 mix bump major
 ```
+
+This can be done on the current branch/PR or, if the PR is particularly complex or there are multiple PRs, create a new branch for a new release.
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
