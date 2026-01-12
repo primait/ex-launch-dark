@@ -9,12 +9,20 @@ defmodule ExLaunchDark.LDAdapter do
 
   @doc """
   Retrieves the value of a single feature flag for a given context.
+
+  NOTE: flag keys are normalised to lowercase and underscores are replaced with hyphens.
   """
   @spec get_feature_flag_value(atom(), String.t(), LDContextStruct.t(), any()) ::
           {:ok, any(), atom()} | {:error, any(), atom()} | {:null, any(), atom()}
   def get_feature_flag_value(project_id, flag_key, ld_context, default_value) do
+    normalised_flag_key = normalise(flag_key)
+
     LDContextBuilder.build_context(ld_context)
-    |> fetch_flag_value(project_id, flag_key, default_value)
+    |> fetch_flag_value(project_id, normalised_flag_key, default_value)
+  end
+
+  defp normalise(s) do
+    s |> String.downcase() |> String.replace("_", "-")
   end
 
   defp fetch_flag_value(ld_context, project_id, flag_key, default_value) do

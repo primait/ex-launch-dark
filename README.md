@@ -47,6 +47,9 @@ case ExLaunchDark.LDAdapter.get_feature_flag_value(:project_key_1, "flag_foo", l
   {:error, _default, reason} -> 
     # Something went wrong, handle the error using given reason
 end
+
+IMPORTANT: elixir generally prefers underscores rather than hypens (e.g. "flag_foo" rather than "flag-foo") but Launchdarkly idioms prefer hyphens. Therefore, `ExLaunchDark.LDAdapter.get_feature_flag_value` automatically 
+replaces underscores in `flag_key` into hyphens. It also downcases for consistency too.
 ```
 
 ## Development

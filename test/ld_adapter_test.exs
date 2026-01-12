@@ -30,6 +30,43 @@ defmodule ExLaunchDark.LDAdapterTest do
       :meck.unload(:ldclient)
     end
 
+    for {source, normalised} <- [
+          {"FLAG_Foo", "flag-foo"},
+          {"flag-bar", "flag-bar"},
+          {"Flag_Baz", "flag-baz"},
+          {"UPPER_CASE", "upper-case"},
+          {"mixed-Case_Flag", "mixed-case-flag"},
+          {"alreadynormalized", "alreadynormalized"}
+        ] do
+      test "flag is normalised: #{source} -> #{normalised}" do
+        :meck.new(:ldclient, [:no_link])
+
+        :meck.expect(:ldclient, :variation_detail, fn flag_key,
+                                                      ld_context,
+                                                      _default,
+                                                      project_id ->
+          assert flag_key == unquote(normalised)
+          assert project_id == :test_project
+          assert :ldclient_context.get_kinds(ld_context) == ["user"]
+
+          {1, "on", {:match_rule, :a, :b}}
+        end)
+
+        ctx = %LDContextStruct{key: "my_ctx", kind: "user", attributes: %{}}
+
+        capture_log(fn ->
+          {result, value, reason} =
+            LDAdapter.get_feature_flag_value(:test_project, unquote(source), ctx, false)
+
+          assert result == :ok
+          assert value == "on"
+          assert reason == :match_rule
+        end)
+
+        :meck.unload(:ldclient)
+      end
+    end
+
     test "Error response" do
       :meck.new(:ldclient, [:no_link])
 
