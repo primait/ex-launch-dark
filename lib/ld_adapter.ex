@@ -17,6 +17,14 @@ defmodule ExLaunchDark.LDAdapter do
     |> fetch_flag_value(project_id, flag_key, default_value)
   end
 
+  @doc """
+  Normalises a flag key by converting it to lowercase and replacing underscores with hyphens.
+  """
+  @spec normalise(String.t()) :: String.t()
+  def normalise(s) do
+    s |> String.downcase() |> String.replace("_", "-")
+  end
+
   defp fetch_flag_value(ld_context, project_id, flag_key, default_value) do
     Logger.debug("Fetching flag: #{flag_key} with LDContext: #{inspect(ld_context)}")
 

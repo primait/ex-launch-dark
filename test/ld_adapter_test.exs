@@ -1,7 +1,7 @@
 defmodule ExLaunchDark.LDAdapterTest do
   use ExUnit.Case
   import ExUnit.CaptureLog
-  alias ExLaunchDark.LDAdapter
+  alias ExLaunchDark.LDAdapter, as: Sut
   alias ExLaunchDark.LDContextStruct
 
   describe "fetch_feature_flag_value" do
@@ -20,7 +20,7 @@ defmodule ExLaunchDark.LDAdapterTest do
 
       capture_log(fn ->
         {result, value, reason} =
-          LDAdapter.get_feature_flag_value(:test_project, "flag_foo", ctx, false)
+          Sut.get_feature_flag_value(:test_project, "flag_foo", ctx, false)
 
         assert result == :ok
         assert value == "on"
@@ -45,13 +45,28 @@ defmodule ExLaunchDark.LDAdapterTest do
 
       capture_log(fn ->
         {result, _value, reason} =
-          LDAdapter.get_feature_flag_value(:test_project, "flag_foo", ctx, false)
+          Sut.get_feature_flag_value(:test_project, "flag_foo", ctx, false)
 
         assert result == :error
         assert reason == :reason_name
       end)
 
       :meck.unload(:ldclient)
+    end
+  end
+
+  describe "normalise/1" do
+    for {actual, expected} <- [
+          {"FLAG_Foo", "flag-foo"},
+          {"flag-bar", "flag-bar"},
+          {"Flag_Baz", "flag-baz"},
+          {"UPPER_CASE", "upper-case"},
+          {"mixed-Case_Flag", "mixed-case-flag"},
+          {"alreadynormalized", "alreadynormalized"}
+        ] do
+      test "flag is normalised: #{actual} -> #{expected}" do
+        assert unquote(expected) == Sut.normalise(unquote(actual))
+      end
     end
   end
 end
