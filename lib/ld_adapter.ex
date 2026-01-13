@@ -47,8 +47,12 @@ defmodule ExLaunchDark.LDAdapter do
     {:ok, value, reason}
   end
 
-  defp parse_flag_response({_idx, _value, reason}, default_value) do
-    Logger.warning("Flag response mismatch", reason: inspect(reason))
+  defp parse_flag_response(response = {_idx, _value, reason}, default_value) do
+    Logger.warning("Flag response mismatch, response = #{inspect(response)}",
+      response: response,
+      default_value: default_value
+    )
+
     {:null, default_value, reason}
   end
 
