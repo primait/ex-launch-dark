@@ -32,14 +32,15 @@ defmodule ExLaunchDark.LDAdapter do
     |> parse_flag_response(default_value)
   end
 
-  defp parse_flag_response({_, _, {:error, reason}}, default_value) do
-    Logger.error("Flag response error", reason: inspect(reason))
+  defp parse_flag_response(response = {_, _, {:error, reason}}, default_value) do
+    Logger.error("Flag response error", reason: inspect(reason), response: response)
     {:error, default_value, reason}
   end
 
-  defp parse_flag_response({variation_idx, value, {reason, _, _}}, _default_value) do
-    Logger.debug(
-      "Flag response ok - variation: #{variation_idx}, value: #{inspect(value)}, reason: #{inspect(reason)}"
+  defp parse_flag_response(response = {variation_idx, value, {reason, _, _}}, _default_value) do
+    Logger.info(
+      "Flag response ok - variation: #{variation_idx}, value: #{inspect(value)}, reason: #{inspect(reason)}",
+      reponse: response
     )
 
     {:ok, value, reason}
