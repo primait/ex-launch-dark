@@ -19,7 +19,7 @@ end
 
 ## Configuration
 
-The client requires a Launch Darkly SDK key to connect to the service. 
+The client requires a Launch Darkly SDK key to connect to the service.
 You can get this key from your Launch Darkly account.
 
 Then in the host application configuration file, typically `config/config.exs` or `config/runtime.exs`, add:
@@ -92,8 +92,41 @@ end
 NOTE: Elixir generally prefers underscores rather than hypens (e.g. "flag_foo" rather than "flag-foo") but Launchdarkly idioms prefer hyphens. `ExLaunchDark.LDAdapter.get_feature_flag_value` makes no assumptions nor enforcement
 of this. If you want to use the Launchdarkly style for your `flag_key` then use `ExLaunchDark.LDAdapter.normalise` first.
 
+## In-memory adapter (testing & local development)
+
+For testing or local development, the library provides an in-memory adapter
+based on ETS:
+
+`ExLaunchDark.InMemoryAdapter`
+
+This adapter implements the same interface as `ExLaunchDark.LDAdapter`, but
+stores feature flag overrides in memory.
+
+⚠️ **Do not use this adapter in production.**
+Data stored in ETS is lost on application restart and is local to a single node.
+
+### Example usage
+
+```elixir
+# Enable the in-memory adapter in your application config (compile time)
+config :my_app, :feature_flags_adapter, ExLaunchDark.InMemoryAdapter
+
+# Override a flag value
+ExLaunchDark.InMemoryAdapter.enable("example-feature-flag")
+
+# Disable a flag
+ExLaunchDark.InMemoryAdapter.disable("example-feature-flag")
+
+# Clear all overrides
+ExLaunchDark.InMemoryAdapter.clear_flags()
+```
+
+Externally defined adapters must implement the `ExLaunchDark.Adapter` behaviour, which defines the
+`get_feature_flag_value/4` callback used for flag evaluation.
+
 ## Development
-In order run this project isolated, you need to ensure you have first installed manually the ``asdf`` 
+
+In order run this project isolated, you need to ensure you have first installed manually the ``asdf``
 tool manager in your host machine, then run:
 
 ```bash
@@ -107,10 +140,11 @@ Then you can fetch the dependencies with:
 ```bash
 mix deps.get
 mix deps.compile
-``` 
+```
 
-### Application commands 
-In order to ease some of the common development tasks, you can use any of the "commands/tasks" 
+### Application commands
+
+In order to ease some of the common development tasks, you can use any of the "commands/tasks"
 defined in the `mise.toml` file, like:
 
 ```bash
@@ -120,7 +154,7 @@ mise code:check
 mise code:format
 ```
 
-## Release 
+## Release
 
 ### Bump the new version and push to GH
 
@@ -147,5 +181,4 @@ This will then kick off the build-and-release-to-hex workflow.
 
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/ex_launch_dark>.
-
+be found at [https://hexdocs.pm/ex_launch_dark](https://hexdocs.pm/ex_launch_dark).

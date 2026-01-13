@@ -7,6 +7,8 @@ defmodule ExLaunchDark.LDAdapter do
   alias ExLaunchDark.LDContextBuilder
   alias ExLaunchDark.LDContextStruct
 
+  @behaviour ExLaunchDark.Adapter
+
   @type context() :: ExLaunchDark.LDContextStruct.t() | ExLaunchDark.LDMultiContextStruct.t()
 
   @doc """
@@ -14,6 +16,7 @@ defmodule ExLaunchDark.LDAdapter do
   """
   @spec get_feature_flag_value(atom(), String.t(), context(), any()) ::
           {:ok, any(), atom()} | {:error, any(), atom()} | {:null, any(), atom()}
+  @impl true
   def get_feature_flag_value(project_id, flag_key, ld_context, default_value) do
     LDContextBuilder.build_context(ld_context)
     |> fetch_flag_value(project_id, flag_key, default_value)
