@@ -30,7 +30,7 @@ defmodule ExLaunchDark.LDAdapterTest do
       :meck.unload(:ldclient)
     end
 
-    test "OK response" do
+    test "fallthrough response" do
       :meck.new(:ldclient, [:no_link])
 
       :meck.expect(:ldclient, :variation_detail, fn flag_key, ld_context, _default, project_id ->
@@ -38,7 +38,7 @@ defmodule ExLaunchDark.LDAdapterTest do
         assert project_id == :test_project
         assert :ldclient_context.get_kinds(ld_context) == ["user"]
 
-        {1, "on", {:match_rule, :a, :b}}
+        {1, "on", :fallthrough}
       end)
 
       ctx = %LDContextStruct{key: "my_ctx", kind: "user", attributes: %{}}
@@ -49,7 +49,7 @@ defmodule ExLaunchDark.LDAdapterTest do
 
         assert result == :ok
         assert value == "on"
-        assert reason == :match_rule
+        assert reason == :fallthrough
       end)
 
       :meck.unload(:ldclient)
