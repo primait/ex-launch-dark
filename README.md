@@ -140,7 +140,19 @@ Then you can fetch the dependencies with:
 ```bash
 mix deps.get
 mix deps.compile
-```
+``` 
+
+## Connecting to staging
+
+There is a [script](./scripts/connect_to_staging.exs) which you can `mix run ./scripts/connect_to_staging.exs <project_key> <sdkkey> <flag_key>` (read the [script](./scripts/connect_to_staging.exs) for more details).
+
+To find your SDK key in Launchdarkly, open up your project in LD and click on the three vertical dots in the "Staging" elements on the right:
+
+![environment](./docs/images/connect_to_staging/1_environment.png)
+
+and choose "SDK key".
+
+![SDK key](./docs/images/connect_to_staging/2_sdk-key.png)
 
 ### Application commands
 
