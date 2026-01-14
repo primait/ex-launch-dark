@@ -3,19 +3,39 @@ defmodule ExLaunchDark.LDContextBuilder do
   Module for building LaunchDarkly context objects.
   """
 
-  @spec build_context(ExLaunchDark.LDContextStruct.t()) :: :ldclient_context.single_context()
+  @spec build_context(ExLaunchDark.LDContextStruct.t() | ExLaunchDark.LDMultiContextStruct.t()) ::
+          :ldclient_context.single_context() | :ldclient_context.multi_context()
+  def build_context(%ExLaunchDark.LDMultiContextStruct{contexts: contexts})
+      when is_list(contexts) do
+    validate_multi_context!(contexts)
+
+    contexts
+    # reuse single-context builder
+    |> Enum.map(&build_context/1)
+    |> :ldclient_context.new_multi_from()
+  end
+
   def build_context(context_struct) do
     context_struct
     |> validate_context()
     |> to_ld_context()
   end
 
-  defp validate_context(%{key: nil} = _context_struct),
-    do: raise("Context Error: key cannot be nil")
+  defp validate_multi_context!([]),
+    do: raise("Context Error: multi-context must contain at least one context")
 
-  defp validate_context(%{kind: nil} = _context_struct),
-    do: raise("Context Error: kind cannot be nil")
+  defp validate_multi_context!(contexts) do
+    kinds = Enum.map(contexts, & &1.kind)
 
+    if length(kinds) != length(Enum.uniq(kinds)) do
+      raise("Context Error: multi-context contains duplicate kinds: #{inspect(kinds)}")
+    end
+
+    :ok
+  end
+
+  defp validate_context(%{key: nil}), do: raise("Context Error: key cannot be nil")
+  defp validate_context(%{kind: nil}), do: raise("Context Error: kind cannot be nil")
   defp validate_context(context_struct), do: context_struct
 
   defp to_ld_context(%{key: key, kind: kind, attributes: attributes}) do

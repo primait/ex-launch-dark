@@ -35,12 +35,15 @@ config :ex_launch_dark, :project_key_n, "sdk-xxxxx-yyyyy-zzzzzzz-22222"
 ```
 
 ## Usage
+
 To start using the library main functions you can start playing with the `ExLaunchDark.LDAdapter` module.
 Which exposes some of the most common flag operations, like:
 
 ```elixir
 # Retrieve the current value of any given feature flag 
+
 ld_ctx = %ExLaunchDark.LDContextStruct{key: "ctx_key_123", kind: "user"}
+
 case ExLaunchDark.LDAdapter.get_feature_flag_value(:project_key_1, "flag_foo", ld_ctx, false) do
   {:ok, value, _reason} -> 
     # All good, use the value
@@ -48,9 +51,46 @@ case ExLaunchDark.LDAdapter.get_feature_flag_value(:project_key_1, "flag_foo", l
     # Something went wrong, handle the error using given reason
 end
 
-NOTE: elixir generally prefers underscores rather than hypens (e.g. "flag_foo" rather than "flag-foo") but Launchdarkly idioms prefer hyphens. `ExLaunchDark.LDAdapter.get_feature_flag_value` makes no assumptions nor enforcement
-of this. If you want to use the Launchdarkly style for your `flag_key` then use `ExLaunchDark.LDAdapter.normalise` first.
+# Retrieve the current value of a feature flag using a multi-context
+# (e.g. application + user in a single evaluation)
+
+app_ctx =
+  %ExLaunchDark.LDContextStruct{
+    key: "my_app_backend",
+    kind: "service",
+    attributes: %{}
+  }
+
+user_ctx =
+  %ExLaunchDark.LDContextStruct{
+    key: "user_123",
+    kind: "user",
+    attributes: %{
+      "country" => "uk",
+      "roles" => ["admin"]
+    }
+  }
+
+multi_ctx =
+  %ExLaunchDark.LDMultiContextStruct{
+    contexts: [app_ctx, user_ctx]
+  }
+
+case ExLaunchDark.LDAdapter.get_feature_flag_value(
+       :project_key_1,
+       "flag_foo",
+       multi_ctx,
+       false
+     ) do
+  {:ok, value, _reason} ->
+    # All good, use the value
+  {:error, _default, reason} ->
+    # Something went wrong, handle the error using given reason
+end
 ```
+
+NOTE: Elixir generally prefers underscores rather than hypens (e.g. "flag_foo" rather than "flag-foo") but Launchdarkly idioms prefer hyphens. `ExLaunchDark.LDAdapter.get_feature_flag_value` makes no assumptions nor enforcement
+of this. If you want to use the Launchdarkly style for your `flag_key` then use `ExLaunchDark.LDAdapter.normalise` first.
 
 ## Development
 In order run this project isolated, you need to ensure you have first installed manually the ``asdf`` 
