@@ -31,6 +31,7 @@ defmodule ExLaunchDark.LDAdapter do
     Logger.debug("Fetching flag: #{flag_key} with LDContext: #{inspect(ld_context)}")
 
     :ldclient.variation_detail(flag_key, ld_context, default_value, project_id)
+    |> tap(&Logger.info("RAW flag response: #{inspect(&1)}", response: &1))
     |> parse_flag_response(default_value)
   end
 
@@ -43,6 +44,16 @@ defmodule ExLaunchDark.LDAdapter do
     Logger.info(
       "Flag response ok - variation: #{variation_idx}, value: #{inspect(value)}, reason: #{inspect(reason)}",
       reponse: response
+    )
+
+    {:ok, value, reason}
+  end
+
+  defp parse_flag_response(response = {variation_idx, value, reason}, _default_value)
+       when is_atom(reason) do
+    Logger.info(
+      "Flag response ok - variation: #{variation_idx}, value: #{inspect(value)}, reason: #{inspect(reason)}",
+      response: response
     )
 
     {:ok, value, reason}

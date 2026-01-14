@@ -109,6 +109,18 @@ mix deps.get
 mix deps.compile
 ``` 
 
+## Connecting to staging
+
+There is a [script](./scripts/connect_to_staging.exs) which you can `mix run ./scripts/connect_to_staging.exs <project_key> <sdkkey> <flag_key>` (read the [script](./scripts/connect_to_staging.exs) for more details).
+
+To find your SDK key in Launchdarkly, open up your project in LD and click on the three vertical dots in the "Staging" elements on the right:
+
+![environment](./docs/images/connect_to_staging/1_environment.png)
+
+and choose "SDK key".
+
+![SDK key](./docs/images/connect_to_staging/2_sdk-key.png)
+
 ### Application commands 
 In order to ease some of the common development tasks, you can use any of the "commands/tasks" 
 defined in the `mise.toml` file, like:
