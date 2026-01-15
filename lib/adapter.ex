@@ -10,4 +10,8 @@ defmodule ExLaunchDark.Adapter do
               {:ok, any(), reason()}
               | {:error, any(), reason()}
               | {:null, any(), reason()}
+
+  def normalize_key(v) when is_binary(v), do: v
+  def normalize_key(v) when is_list(v), do: IO.iodata_to_binary(v)
+  def normalize_key(v), do: v |> to_string() |> IO.iodata_to_binary()
 end

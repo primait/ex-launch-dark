@@ -46,7 +46,7 @@ defmodule ExLaunchDark.InMemoryAdapter do
   @spec set_flag_value(flag_key(), boolean()) :: :ok
   def set_flag_value(flag_key, value) when is_boolean(value) do
     ensure_table()
-    key = normalize_key(flag_key)
+    key = ExLaunchDark.Adapter.normalize_key(flag_key)
     :ets.insert(table(), {key, value})
     :ok
   end
@@ -56,7 +56,7 @@ defmodule ExLaunchDark.InMemoryAdapter do
           {:ok, any(), atom()} | {:error, any(), atom()} | {:null, any(), atom()}
   def get_feature_flag_value(_proj_key, flag_key, _context, default) do
     ensure_table()
-    key = normalize_key(flag_key)
+    key = ExLaunchDark.Adapter.normalize_key(flag_key)
 
     case :ets.lookup(table(), key) do
       [{^key, value}] -> {:ok, value, :test_override}
@@ -64,8 +64,4 @@ defmodule ExLaunchDark.InMemoryAdapter do
       _ -> {:error, default, :no_match}
     end
   end
-
-  defp normalize_key(v) when is_binary(v), do: v
-  defp normalize_key(v) when is_list(v), do: IO.iodata_to_binary(v)
-  defp normalize_key(v), do: v |> to_string() |> IO.iodata_to_binary()
 end
