@@ -1,6 +1,28 @@
 defmodule ExLaunchDark.Application do
   @moduledoc """
-  Public API + application start for ExLaunchDark.
+  ExLaunchDark - Elixir integration for LaunchDarkly feature flags.
+
+  ## Quick Start
+
+  Use the unified `ExLaunchDark.FeatureFlags` interface to interact with feature flags:
+
+      alias ExLaunchDark.FeatureFlags
+      alias ExLaunchDark.LDContextStruct
+
+      context = %LDContextStruct{key: "user-123", kind: "user"}
+      {:ok, value, _reason} = FeatureFlags.get_flag(:my_project, "feature-key", context, false)
+
+  ## Configuration
+
+  Configure the adapter in your config files:
+
+      # Production: LaunchDarkly
+      config :ex_launch_dark, :adapter, ExLaunchDark.LDAdapter
+
+      # Test/Dev: In-Memory
+      config :ex_launch_dark, :adapter, ExLaunchDark.InMemoryAdapter
+
+  See `ExLaunchDark.FeatureFlags` for the main API documentation.
   """
 
   use Application
