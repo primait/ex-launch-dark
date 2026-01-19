@@ -7,6 +7,8 @@ defmodule ExLaunchDark.LDAdapter do
   alias ExLaunchDark.LDContextBuilder
   alias ExLaunchDark.LDContextStruct
 
+  @behaviour ExLaunchDark.Adapter
+
   @type context() :: ExLaunchDark.LDContextStruct.t() | ExLaunchDark.LDMultiContextStruct.t()
 
   @doc """
@@ -14,9 +16,12 @@ defmodule ExLaunchDark.LDAdapter do
   """
   @spec get_feature_flag_value(atom(), String.t(), context(), any()) ::
           {:ok, any(), atom()} | {:error, any(), atom()} | {:null, any(), atom()}
+  @impl true
   def get_feature_flag_value(project_id, flag_key, ld_context, default_value) do
+    key = ExLaunchDark.Adapter.normalize_key(flag_key)
+
     LDContextBuilder.build_context(ld_context)
-    |> fetch_flag_value(project_id, flag_key, default_value)
+    |> fetch_flag_value(project_id, key, default_value)
   end
 
   @doc """
@@ -28,9 +33,10 @@ defmodule ExLaunchDark.LDAdapter do
   end
 
   defp fetch_flag_value(ld_context, project_id, flag_key, default_value) do
-    Logger.debug("Fetching flag: #{flag_key} with LDContext: #{inspect(ld_context)}")
+    key = ExLaunchDark.Adapter.normalize_key(flag_key)
+    Logger.debug("Fetching flag: #{key} with LDContext: #{inspect(ld_context)}")
 
-    :ldclient.variation_detail(flag_key, ld_context, default_value, project_id)
+    :ldclient.variation_detail(key, ld_context, default_value, project_id)
     |> tap(&Logger.info("RAW flag response: #{inspect(&1)}", response: &1))
     |> parse_flag_response(default_value)
   end
