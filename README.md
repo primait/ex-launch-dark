@@ -25,6 +25,9 @@ You can get this key from your Launch Darkly account.
 Then in the host application configuration file, typically `config/config.exs` or `config/runtime.exs`, add:
 
 ```elixir
+# Choose the adapter (defaults to LDAdapter if not specified)
+config :ex_launch_dark, :adapter, ExLaunchDark.LDAdapter
+
 # List all project keys to be used
 config :ex_launch_dark, :projects, [:project_key_1, :project_key_n]
 # Defined shared url among all different project clients
@@ -34,9 +37,90 @@ config :ex_launch_dark, :project_key_1, "sdk-xxxxx-yyyyy-zzzzzzz-11111"
 config :ex_launch_dark, :project_key_n, "sdk-xxxxx-yyyyy-zzzzzzz-22222"
 ```
 
+For testing or local development, use the in-memory adapter:
+
+```elixir
+# In config/test.exs or config/dev.exs
+config :ex_launch_dark, :adapter, ExLaunchDark.InMemoryAdapter
+```
+
 ## Usage
 
-To start using the library main functions you can start playing with the `ExLaunchDark.LDAdapter` module.
+### Using the unified interface (recommended)
+
+The `ExLaunchDark.FeatureFlags` module provides a unified interface that automatically routes calls
+to the configured adapter (LaunchDarkly or in-memory). This is the recommended way to interact with feature flags:
+
+```elixir
+# Retrieve the current value of any given feature flag 
+
+ld_ctx = %ExLaunchDark.LDContextStruct{key: "ctx_key_123", kind: "user"}
+
+case ExLaunchDark.FeatureFlags.get_flag(:project_key_1, "flag_foo", ld_ctx, false) do
+  {:ok, value, _reason} -> 
+    # All good, use the value
+  {:error, _default, reason} -> 
+    # Something went wrong, handle the error using given reason
+end
+
+# Retrieve the current value of a feature flag using a multi-context
+# (e.g. application + user in a single evaluation)
+
+app_ctx =
+  %ExLaunchDark.LDContextStruct{
+    key: "my_app_backend",
+    kind: "service",
+    attributes: %{}
+  }
+
+user_ctx =
+  %ExLaunchDark.LDContextStruct{
+    key: "user_123",
+    kind: "user",
+    attributes: %{
+      "country" => "uk",
+      "roles" => ["admin"]
+    }
+  }
+
+multi_ctx =
+  %ExLaunchDark.LDMultiContextStruct{
+    contexts: [app_ctx, user_ctx]
+  }
+
+case ExLaunchDark.FeatureFlags.get_flag(
+       :project_key_1,
+       "flag_foo",
+       multi_ctx,
+       false
+     ) do
+  {:ok, value, _reason} ->
+    # All good, use the value
+  {:error, _default, reason} ->
+    # Something went wrong, handle the error using given reason
+end
+
+# Track events (LaunchDarkly adapter only)
+ExLaunchDark.FeatureFlags.track_event(:project_key_1, "purchase", ld_ctx, %{amount: 99.99})
+
+# Get all flags state (LaunchDarkly adapter only)
+flags_state = ExLaunchDark.FeatureFlags.get_all_flags(:project_key_1, ld_ctx)
+```
+
+The adapter is automatically selected based on your configuration. Switch between adapters without 
+changing any code in your client services:
+
+```elixir
+# Production: use LaunchDarkly
+config :ex_launch_dark, :adapter, ExLaunchDark.LDAdapter
+
+# Test: use in-memory adapter
+config :ex_launch_dark, :adapter, ExLaunchDark.InMemoryAdapter
+```
+
+### Direct adapter usage (advanced)
+
+You can also call the adapters directly if needed. To start using the library main functions you can start playing with the `ExLaunchDark.LDAdapter` module.
 Which exposes some of the most common flag operations, like:
 
 ```elixir
