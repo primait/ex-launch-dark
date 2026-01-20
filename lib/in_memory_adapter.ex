@@ -52,8 +52,6 @@ defmodule ExLaunchDark.InMemoryAdapter do
   end
 
   @impl true
-  @spec get_feature_flag_value(atom(), flag_key(), context(), any()) ::
-          {:ok, any(), atom()} | {:error, any(), atom()} | {:null, any(), atom()}
   def get_feature_flag_value(_proj_key, flag_key, _context, default) do
     ensure_table()
     key = ExLaunchDark.Adapter.normalize_key(flag_key)

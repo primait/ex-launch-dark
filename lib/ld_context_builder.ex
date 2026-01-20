@@ -3,7 +3,7 @@ defmodule ExLaunchDark.LDContextBuilder do
   Module for building LaunchDarkly context objects.
   """
 
-  @spec build_context(ExLaunchDark.LDContextStruct.t() | ExLaunchDark.LDMultiContextStruct.t()) ::
+  @spec build_context(ExLaunchDark.Adapter.context()) ::
           :ldclient_context.single_context() | :ldclient_context.multi_context()
   def build_context(%ExLaunchDark.LDMultiContextStruct{contexts: contexts})
       when is_list(contexts) do

@@ -9,13 +9,9 @@ defmodule ExLaunchDark.LDAdapter do
 
   @behaviour ExLaunchDark.Adapter
 
-  @type context() :: ExLaunchDark.LDContextStruct.t() | ExLaunchDark.LDMultiContextStruct.t()
-
   @doc """
   Retrieves the value of a single feature flag for a given context.
   """
-  @spec get_feature_flag_value(atom(), String.t(), context(), any()) ::
-          {:ok, any(), atom()} | {:error, any(), atom()} | {:null, any(), atom()}
   @impl true
   def get_feature_flag_value(project_id, flag_key, ld_context, default_value) do
     key = ExLaunchDark.Adapter.normalize_key(flag_key)

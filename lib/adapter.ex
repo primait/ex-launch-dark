@@ -1,7 +1,7 @@
 defmodule ExLaunchDark.Adapter do
   @moduledoc false
 
-  @type context :: ExLaunchDark.LDContextStruct.t()
+  @type context :: ExLaunchDark.LDContextStruct.t() | ExLaunchDark.LDMultiContextStruct.t()
   @type project_key :: atom()
   @type flag_key :: String.t() | binary()
   @type reason :: atom()
