@@ -4,7 +4,6 @@ defmodule ExLaunchDark.LDTester do
   """
   require Logger
 
-  alias ExLaunchDark.Adapter
   alias ExLaunchDark.LDAdapter
   alias ExLaunchDark.LDContextStruct
 
