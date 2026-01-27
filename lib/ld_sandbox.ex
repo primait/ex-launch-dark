@@ -1,4 +1,4 @@
-defmodule ExLaunchDark.LDTester do
+defmodule ExLaunchDark.LDSandbox do
   @moduledoc """
   A module for testing purposes.
   """

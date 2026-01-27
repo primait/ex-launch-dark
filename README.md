@@ -152,18 +152,18 @@ so the library can connect to it, and perform the operations predefined.
 - Create a `config/dev.exs` file with the necessary configuration, similar to the one defined in the "Configuration" section above.
     - This file is ignored by git so it won't be committed.
 - Start the application with `iex -S mix` or `mise start` to get an interactive shell.
-- Execute any of the functions available in the [`ExLaunchDark.LDTester` module](lib/ex_launch_dark/ld_tester.ex) to perform operations against the vendor service.
+- Execute any of the functions available in the [`ExLaunchDark.LDSandbox` module](lib/ex_launch_dark/ld_sandbox.ex) to perform operations against the vendor service.
 
 e.g: 
 ```elixir
 # Would get you the value of "flag_foo" using a random generated context 
-ExLaunchDark.LDTester.get_flag_value_random_context(:project_key_1, "flag_foo", false)
+ExLaunchDark.LDSandbox.get_flag_value_random_context(:project_key_1, "flag_foo", false)
 
 # Would get you the value of "flag_foo" using a predefined context kind and random key 
-ExLaunchDark.LDTester.get_flag_value_context_kind(:project_key_1, "flag_foo", "user")
+ExLaunchDark.LDSandbox.get_flag_value_context_kind(:project_key_1, "flag_foo", "user")
 
 # Would get you the value of "flag_foo" using a fully predefined context
-ExLaunchDark.LDTester.get_flag_value_fixed_context(:project_key_1, "flag_foo", "user", "user_key_123", %{"foo" => "bar"})
+ExLaunchDark.LDSandbox.get_flag_value_fixed_context(:project_key_1, "flag_foo", "user", "user_key_123", %{"foo" => "bar"})
 ```
 
 ### Application CLI utils
