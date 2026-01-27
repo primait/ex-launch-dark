@@ -92,38 +92,6 @@ end
 NOTE: Elixir generally prefers underscores rather than hypens (e.g. "flag_foo" rather than "flag-foo") but Launchdarkly idioms prefer hyphens. `ExLaunchDark.LDAdapter.get_feature_flag_value` makes no assumptions nor enforcement
 of this. If you want to use the Launchdarkly style for your `flag_key` then use `ExLaunchDark.LDAdapter.normalise` first.
 
-## In-memory adapter (testing & local development)
-
-For testing or local development, the library provides an in-memory adapter
-based on ETS:
-
-`ExLaunchDark.InMemoryAdapter`
-
-This adapter implements the same interface as `ExLaunchDark.LDAdapter`, but
-stores feature flag overrides in memory.
-
-⚠️ **Do not use this adapter in production.**
-Data stored in ETS is lost on application restart and is local to a single node.
-
-### Example usage
-
-```elixir
-# Enable the in-memory adapter in your application config (compile time)
-config :my_app, :feature_flags_adapter, ExLaunchDark.InMemoryAdapter
-
-# Override a flag value
-ExLaunchDark.InMemoryAdapter.enable("example-feature-flag")
-
-# Disable a flag
-ExLaunchDark.InMemoryAdapter.disable("example-feature-flag")
-
-# Clear all overrides
-ExLaunchDark.InMemoryAdapter.clear_flags()
-```
-
-Externally defined adapters must implement the `ExLaunchDark.Adapter` behaviour, which defines the
-`get_feature_flag_value/4` callback used for flag evaluation.
-
 ## Development
 
 In order run this project isolated, you need to ensure you have first installed manually the ``asdf``
@@ -142,7 +110,61 @@ mix deps.get
 mix deps.compile
 ```
 
-### Application commands
+### In-memory adapter (testing & local development)
+
+For testing or local development, the library provides an in-memory adapter
+based on ETS:
+
+`ExLaunchDark.InMemoryAdapter`
+
+This adapter implements the same interface as `ExLaunchDark.LDAdapter`, but
+stores feature flag overrides in memory.
+
+⚠️ **Do not use this adapter in production.**
+Data stored in ETS is lost on application restart and is local to a single node.
+
+#### Example usage
+
+```elixir
+# Enable the in-memory adapter in your application config (compile time)
+config :my_app, :feature_flags_adapter, ExLaunchDark.InMemoryAdapter
+
+# Override a flag value
+ExLaunchDark.InMemoryAdapter.enable("example-feature-flag")
+
+# Disable a flag
+ExLaunchDark.InMemoryAdapter.disable("example-feature-flag")
+
+# Clear all overrides
+ExLaunchDark.InMemoryAdapter.clear_flags()
+```
+
+Externally defined adapters must implement the `ExLaunchDark.Adapter` behaviour, which defines the
+`get_feature_flag_value/4` callback used for flag evaluation.
+
+### Real local tests 
+
+To run real tests against Launch Darkly service, you need to define the necessary configuration for any real LD project 
+so the library can connect to it, and perform the operations predefined. 
+
+- Create a `config/dev.exs` file with the necessary configuration, similar to the one defined in the "Configuration" section above.
+    - This file is ignored by git so it won't be committed.
+- Start the application with `iex -S mix` to get an interactive shell.
+- Execute any of the functions available in the `ExLaunchDark.LDTester` module to perform operations against the vendor service.
+
+e.g: 
+```elixir
+# Would get you the value of "flag_foo" using a random generated context 
+ExLaunchDark.LDTester.test_flag_value_random_context(:project_key_1, "flag_foo", false)
+
+# Would get you the value of "flag_foo" using a predefined context kind and random key 
+ExLaunchDark.LDTester.test_flag_value_context_kind(:project_key_1, "flag_foo", "user")
+
+# Would get you the value of "flag_foo" using a fully predefined context
+ExLaunchDark.LDTester.test_flag_value_fixed_context(:project_key_1, "flag_foo", "user", "user_key_123", %{"foo" => "bar"})
+```
+
+### Application command utils
 
 In order to ease some of the common development tasks, you can use any of the "commands/tasks"
 defined in the `mise.toml` file, like:
