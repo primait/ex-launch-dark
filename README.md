@@ -157,13 +157,13 @@ so the library can connect to it, and perform the operations predefined.
 e.g: 
 ```elixir
 # Would get you the value of "flag_foo" using a random generated context 
-ExLaunchDark.LDTester.test_flag_value_random_context(:project_key_1, "flag_foo", false)
+ExLaunchDark.LDTester.get_flag_value_random_context(:project_key_1, "flag_foo", false)
 
 # Would get you the value of "flag_foo" using a predefined context kind and random key 
-ExLaunchDark.LDTester.test_flag_value_context_kind(:project_key_1, "flag_foo", "user")
+ExLaunchDark.LDTester.get_flag_value_context_kind(:project_key_1, "flag_foo", "user")
 
 # Would get you the value of "flag_foo" using a fully predefined context
-ExLaunchDark.LDTester.test_flag_value_fixed_context(:project_key_1, "flag_foo", "user", "user_key_123", %{"foo" => "bar"})
+ExLaunchDark.LDTester.get_flag_value_fixed_context(:project_key_1, "flag_foo", "user", "user_key_123", %{"foo" => "bar"})
 ```
 
 ### Application CLI utils
