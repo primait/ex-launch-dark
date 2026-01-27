@@ -7,10 +7,11 @@ defmodule ExLaunchDark.LDTester do
   alias ExLaunchDark.LDAdapter
   alias ExLaunchDark.LDContextStruct
 
-  @spec test_flag_value_random_context(atom(), binary(), atom() | binary() | nil) :: binary() | nil
+  @spec test_flag_value_random_context(atom(), binary(), atom() | binary() | nil) ::
+          binary() | nil
   def test_flag_value_random_context(project_id, flag_key, default \\ nil) do
-      random_context = build_random_context()
-      LDAdapter.get_feature_flag_value(project_id, flag_key, random_context, default)
+    random_context = build_random_context()
+    LDAdapter.get_feature_flag_value(project_id, flag_key, random_context, default)
   end
 
   @spec test_flag_value_context_kind(atom(), binary(), binary(), map() | nil) :: binary() | nil
@@ -19,9 +20,21 @@ defmodule ExLaunchDark.LDTester do
     LDAdapter.get_feature_flag_value(project_id, flag_key, random_context, nil)
   end
 
-  @spec test_flag_value_fixed_context(atom(), binary(), binary(), binary(), map() | nil) :: binary() | nil
-  def test_flag_value_fixed_context(project_id, flag_key, context_kind, context_key, context_attr \\ %{}) do
-    flag_context = %LDContextStruct{kind: context_kind, key: context_key, attributes: context_attr}
+  @spec test_flag_value_fixed_context(atom(), binary(), binary(), binary(), map() | nil) ::
+          binary() | nil
+  def test_flag_value_fixed_context(
+        project_id,
+        flag_key,
+        context_kind,
+        context_key,
+        context_attr \\ %{}
+      ) do
+    flag_context = %LDContextStruct{
+      kind: context_kind,
+      key: context_key,
+      attributes: context_attr
+    }
+
     LDAdapter.get_feature_flag_value(project_id, flag_key, flag_context, nil)
   end
 
