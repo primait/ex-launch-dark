@@ -38,9 +38,15 @@ defmodule ExLaunchDark.LDTester do
     LDAdapter.get_feature_flag_value(project_id, flag_key, flag_context, nil)
   end
 
+  @spec test_all_flags_state_random(atom(), binary()) :: binary() | nil
+  def test_all_flags_state_random(project_id, context_kind) do
+    random_context = build_random_context(%{"kind" => context_kind})
+    LDAdapter.get_all_flags(project_id, random_context)
+  end
+
   defp build_random_context(context_data \\ %{}) do
     %LDContextStruct{
-      key: "key-#{:rand.uniform(10000)}",
+      key: Map.get(context_data, "key", "key-#{:rand.uniform(10000)}"),
       kind: Map.get(context_data, "kind", "user"),
       attributes: Map.get(context_data, "attributes", %{})
     }
