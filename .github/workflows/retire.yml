@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REASON: "deprecated"
+      VERSION: ${{ github.event.release.tag_name }}
       MESSAGE: "Version removed from source code repository"
     steps:
       - name: Checkout
@@ -19,11 +20,6 @@ jobs:
         with:
           otp-version: '26'
           elixir-version: '1.18'
-      - name: Get version
-        run: |
-          VERSION=${{ github.event.release.tag_name }}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "Attempting to retire version $VERSION"
       - name: Authenticate
         run: mix hex.config api_key "$HEX_AUTH_KEY"
         env:
@@ -31,4 +27,6 @@ jobs:
       - name: Check user
         run: mix hex.user whoami
       - name: Retire version
-        run: mix hex.retire ex_launch_dark "${{ env.VERSION }}" "$REASON" --message "$MESSAGE"
+        run: |
+          echo "Attempting to retire version $VERSION" 
+          mix hex.retire ex_launch_dark "$VERSION" "$REASON" --message "$MESSAGE"
