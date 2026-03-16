@@ -21,8 +21,9 @@ jobs:
           elixir-version: '1.18'
       - name: Get version
         run: |
-          - echo "VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
-          - echo "Attempting to retire version $VERSION"
+          VERSION=${{ github.event.release.tag_name }}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Attempting to retire version $VERSION"
       - name: Authenticate
         run: mix hex.config api_key "$HEX_AUTH_KEY"
         env:
