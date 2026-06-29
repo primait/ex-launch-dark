@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "ex-launch-dark"
+  description: "Elixir Launch Darkly integration library"
+spec:
+  type: "service"
+  lifecycle: production
+  owner: "group:default/team-artemis"
+  system: prima.it
