@@ -10,7 +10,7 @@ jobs:
     env:
       MIX_ENV: test
     steps:
-      - uses: erlef/setup-beam@v1
+      - uses: erlef/setup-beam@v1.24.0
         with:
           otp-version: '26'
           elixir-version: '1.18'
