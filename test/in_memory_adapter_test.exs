@@ -115,7 +115,7 @@ defmodule ExLaunchDark.InMemoryAdapterTest do
 
           receive do
             :clear_overrides ->
-              InMemoryAdapter.clear_flags()
+              InMemoryAdapter.clear_flags_for(self())
               assert_feature_flag_value(flag, false, :default)
               send(current_test_pid, :cleared)
           end

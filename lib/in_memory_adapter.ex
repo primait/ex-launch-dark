@@ -47,12 +47,17 @@ defmodule ExLaunchDark.InMemoryAdapter do
   @spec clear_flags() :: :ok
   def clear_flags do
     ensure_table()
+    :ets.delete_all_objects(table())
+    :ok
+  end
 
-    case scope() do
-      :global -> :ets.delete_all_objects(table())
-      :process -> :ets.match_delete(table(), {{self(), :_}, :_})
-    end
-
+  @doc """
+  Clears all feature flags for the given process ID.
+  """
+  @spec clear_flags_for(pid()) :: :ok
+  def clear_flags_for(pid) when is_pid(pid) do
+    ensure_table()
+    :ets.match_delete(table(), {{pid, :_}, :_})
     :ok
   end
 
