@@ -4,7 +4,8 @@ defmodule ExLaunchDark.InMemoryAdapterTest do
   alias ExLaunchDark.InMemoryAdapter
 
   setup do
-    start_supervised!(ExLaunchDark.InMemoryAdapter.TableKeeper)
+    # The keeper is started by the application; just ensure a clean table between tests.
+    on_exit(fn -> InMemoryAdapter.clear_flags() end)
     :ok
   end
 
@@ -71,6 +72,13 @@ defmodule ExLaunchDark.InMemoryAdapterTest do
         {:ok, true, :test_override}
       }
     end
+
+    test "clear_flags/0 clears all overrides" do
+      InMemoryAdapter.enable("flag-g")
+      assert_feature_flag_value("flag-g", true, :test_override)
+      :ok = InMemoryAdapter.clear_flags()
+      assert_feature_flag_value("flag-g", false, :default)
+    end
   end
 
   describe ":process scope" do
@@ -136,10 +144,70 @@ defmodule ExLaunchDark.InMemoryAdapterTest do
       # our override must still exist
       assert_feature_flag_value(flag, true, :test_override)
     end
+
+    test "clear_flags/0 raises in process scope" do
+      assert_raise ArgumentError, ~r/clear_flags_for/, fn ->
+        InMemoryAdapter.clear_flags()
+      end
+    end
   end
 
   def assert_feature_flag_value(flag_key, expected_value, expected_source) do
     assert {:ok, ^expected_value, ^expected_source} =
              InMemoryAdapter.get_feature_flag_value("project", flag_key, %{}, false)
+  end
+
+  describe "TableKeeper ownership" do
+    setup do
+      Application.put_env(:ex_launch_dark, :in_memory_adapter_scope, :process)
+      on_exit(fn -> Application.delete_env(:ex_launch_dark, :in_memory_adapter_scope) end)
+      :ok
+    end
+
+    test "TableKeeper creates and owns the ETS table" do
+      table = Application.get_env(:ex_launch_dark, :in_memory_adapter_table, :ex_launch_dark_feature_flags)
+      keeper = Process.whereis(ExLaunchDark.InMemoryAdapter.TableKeeper)
+      assert is_pid(keeper), "TableKeeper must be running"
+      assert :ets.info(table, :owner) == keeper
+    end
+
+    test "ETS table ownership remains with TableKeeper after a caller exits" do
+      table = Application.get_env(:ex_launch_dark, :in_memory_adapter_table, :ex_launch_dark_feature_flags)
+      keeper = Process.whereis(ExLaunchDark.InMemoryAdapter.TableKeeper)
+      parent = self()
+
+      process_a =
+        spawn(fn ->
+          InMemoryAdapter.enable("flag-a")
+          send(parent, :a_ready)
+          receive do: (:stop -> :ok)
+        end)
+
+      assert_receive :a_ready
+
+      process_b =
+        spawn(fn ->
+          InMemoryAdapter.enable("flag-b")
+          initial = InMemoryAdapter.get_feature_flag_value(:proj, "flag-b", %{}, false)
+          send(parent, {:b_ready, initial})
+
+          receive do
+            :check ->
+              result = InMemoryAdapter.get_feature_flag_value(:proj, "flag-b", %{}, false)
+              send(parent, {:b_result, result})
+          end
+        end)
+
+      assert_receive {:b_ready, {:ok, true, :test_override}}
+
+      ref = Process.monitor(process_a)
+      send(process_a, :stop)
+      assert_receive {:DOWN, ^ref, :process, ^process_a, :normal}
+
+      assert :ets.info(table, :owner) == keeper, "TableKeeper must still own the table after process_a exits"
+
+      send(process_b, :check)
+      assert_receive {:b_result, {:ok, true, :test_override}}
+    end
   end
 end

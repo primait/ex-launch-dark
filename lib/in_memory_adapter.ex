@@ -41,9 +41,17 @@ defmodule ExLaunchDark.InMemoryAdapter do
 
   @spec clear_flags() :: :ok
   def clear_flags do
-    ensure_table()
-    :ets.delete_all_objects(table())
-    :ok
+    case scope() do
+      :global ->
+        ensure_table()
+        :ets.delete_all_objects(table())
+        :ok
+
+      :process ->
+        raise ArgumentError,
+              "clear_flags/0 cannot be used with :process scope; " <>
+                "use clear_flags_for/1 instead"
+    end
   end
 
   @doc """

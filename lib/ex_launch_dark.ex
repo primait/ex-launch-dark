@@ -20,7 +20,7 @@ defmodule ExLaunchDark.Application do
     end)
 
     children =
-      if Application.get_env(:ex_launch_dark, :start_in_memory_adapter, false) do
+      if Application.get_env(:ex_launch_dark, :start_in_memory_adapter, true) do
         [ExLaunchDark.InMemoryAdapter.TableKeeper]
       else
         []
