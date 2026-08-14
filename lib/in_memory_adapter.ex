@@ -27,22 +27,12 @@ defmodule ExLaunchDark.InMemoryAdapter do
   end
 
   defp ensure_table do
-    t = table()
-
-    case :ets.info(t) do
+    case :ets.info(table()) do
       :undefined ->
-        try do
-          :ets.new(t, [:named_table, :set, :public, read_concurrency: true])
-          # Give ownership to the long-lived keeper so the table survives any caller exiting.
-          case Process.whereis(ExLaunchDark.InMemoryAdapter.TableKeeper) do
-            nil -> :ok
-            keeper -> :ets.give_away(t, keeper, nil)
-          end
-          :ok
-        rescue
-          # another process already created the table concurrently
-          ArgumentError -> :ok
-        end
+        raise RuntimeError,
+              "ExLaunchDark.InMemoryAdapter is not initialized. " <>
+                "Set `config :ex_launch_dark, :start_in_memory_adapter, true` " <>
+                "before using the in-memory adapter."
 
       _ ->
         :ok

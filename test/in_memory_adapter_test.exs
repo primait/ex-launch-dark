@@ -3,6 +3,11 @@ defmodule ExLaunchDark.InMemoryAdapterTest do
 
   alias ExLaunchDark.InMemoryAdapter
 
+  setup do
+    start_supervised!(ExLaunchDark.InMemoryAdapter.TableKeeper)
+    :ok
+  end
+
   test "returns default when no override exists" do
     assert {:ok, false, :default} =
              InMemoryAdapter.get_feature_flag_value(:proj, "flag-a", %{}, false)
@@ -43,7 +48,6 @@ defmodule ExLaunchDark.InMemoryAdapterTest do
 
       on_exit(fn ->
         Application.delete_env(:ex_launch_dark, :in_memory_adapter_scope)
-        InMemoryAdapter.clear_flags()
       end)
 
       :ok

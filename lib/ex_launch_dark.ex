@@ -19,7 +19,14 @@ defmodule ExLaunchDark.Application do
       end
     end)
 
-    Supervisor.start_link([ExLaunchDark.InMemoryAdapter.TableKeeper], strategy: :one_for_one, name: ExLaunchDark.Supervisor)
+    children =
+      if Application.get_env(:ex_launch_dark, :start_in_memory_adapter, false) do
+        [ExLaunchDark.InMemoryAdapter.TableKeeper]
+      else
+        []
+      end
+
+    Supervisor.start_link(children, strategy: :one_for_one, name: ExLaunchDark.Supervisor)
   end
 
   defp build_projects_config do
