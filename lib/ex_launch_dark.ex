@@ -19,7 +19,7 @@ defmodule ExLaunchDark.Application do
       end
     end)
 
-    Supervisor.start_link([], strategy: :one_for_one, name: ExLaunchDark.Supervisor)
+    Supervisor.start_link([ExLaunchDark.InMemoryAdapter.TableKeeper], strategy: :one_for_one, name: ExLaunchDark.Supervisor)
   end
 
   defp build_projects_config do

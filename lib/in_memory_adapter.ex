@@ -33,6 +33,11 @@ defmodule ExLaunchDark.InMemoryAdapter do
       :undefined ->
         try do
           :ets.new(t, [:named_table, :set, :public, read_concurrency: true])
+          # Give ownership to the long-lived keeper so the table survives any caller exiting.
+          case Process.whereis(ExLaunchDark.InMemoryAdapter.TableKeeper) do
+            nil -> :ok
+            keeper -> :ets.give_away(t, keeper, nil)
+          end
           :ok
         rescue
           # another process already created the table concurrently
