@@ -43,6 +43,30 @@ defmodule ExLaunchDark.InMemoryAdapterTest do
              InMemoryAdapter.get_feature_flag_value(:proj, "flag-a", %{}, false)
   end
 
+  describe "invalid scope config" do
+    setup do
+      Application.put_env(:ex_launch_dark, :in_memory_adapter_scope, :invalid_scope)
+
+      on_exit(fn ->
+        Application.delete_env(:ex_launch_dark, :in_memory_adapter_scope)
+      end)
+
+      :ok
+    end
+
+    test "raises ArgumentError when reading a flag" do
+      assert_raise ArgumentError, ~r/invalid :in_memory_adapter_scope/, fn ->
+        InMemoryAdapter.get_feature_flag_value("project", "flag-a", %{}, false)
+      end
+    end
+
+    test "raises ArgumentError when setting a flag" do
+      assert_raise ArgumentError, ~r/invalid :in_memory_adapter_scope/, fn ->
+        InMemoryAdapter.enable("flag-a")
+      end
+    end
+  end
+
   describe ":global scope" do
     setup do
       Application.put_env(:ex_launch_dark, :in_memory_adapter_scope, :global)
