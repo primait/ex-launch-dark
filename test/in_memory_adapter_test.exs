@@ -165,14 +165,26 @@ defmodule ExLaunchDark.InMemoryAdapterTest do
     end
 
     test "TableKeeper creates and owns the ETS table" do
-      table = Application.get_env(:ex_launch_dark, :in_memory_adapter_table, :ex_launch_dark_feature_flags)
+      table =
+        Application.get_env(
+          :ex_launch_dark,
+          :in_memory_adapter_table,
+          :ex_launch_dark_feature_flags
+        )
+
       keeper = Process.whereis(ExLaunchDark.InMemoryAdapter.TableKeeper)
       assert is_pid(keeper), "TableKeeper must be running"
       assert :ets.info(table, :owner) == keeper
     end
 
     test "ETS table ownership remains with TableKeeper after a caller exits" do
-      table = Application.get_env(:ex_launch_dark, :in_memory_adapter_table, :ex_launch_dark_feature_flags)
+      table =
+        Application.get_env(
+          :ex_launch_dark,
+          :in_memory_adapter_table,
+          :ex_launch_dark_feature_flags
+        )
+
       keeper = Process.whereis(ExLaunchDark.InMemoryAdapter.TableKeeper)
       parent = self()
 
@@ -204,7 +216,8 @@ defmodule ExLaunchDark.InMemoryAdapterTest do
       send(process_a, :stop)
       assert_receive {:DOWN, ^ref, :process, ^process_a, :normal}
 
-      assert :ets.info(table, :owner) == keeper, "TableKeeper must still own the table after process_a exits"
+      assert :ets.info(table, :owner) == keeper,
+             "TableKeeper must still own the table after process_a exits"
 
       send(process_b, :check)
       assert_receive {:b_result, {:ok, true, :test_override}}

@@ -21,6 +21,7 @@ defmodule ExLaunchDark.InMemoryAdapter.TableKeeperTest do
   describe "custom table name" do
     setup do
       Application.put_env(:ex_launch_dark, :in_memory_adapter_table, :custom_keeper_test_table)
+
       # Start a keeper without name registration so it doesn't conflict with the app-supervised keeper.
       # Use start/2 (not start_link) so the keeper outlives the test process until we stop it explicitly.
       {:ok, keeper} = GenServer.start(ExLaunchDark.InMemoryAdapter.TableKeeper, [])
