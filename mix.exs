@@ -37,7 +37,7 @@ defmodule ExLaunchDark.MixProject do
     [
       {:ldclient, "~> 3.0", hex: :launchdarkly_server_sdk},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:meck, "~> 0.9.2", only: :test},
+      {:meck, "~> 1.2.0", only: :test},
       {:mix_bump, "~> 0.1.0", only: [:dev, :staging]},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
