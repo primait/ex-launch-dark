@@ -125,10 +125,67 @@ stores feature flag overrides in memory.
 ⚠️ **Do not use this adapter in production.**
 Data stored in ETS is lost on application restart and is local to a single node.
 
+#### Default startup
+
+The in-memory adapter's ETS table is managed by `ExLaunchDark.InMemoryAdapter.TableKeeper`,
+a supervised GenServer that starts automatically with the application and owns
+the table for its full lifetime. No caller process can accidentally become the
+ETS owner, so the table is never deleted by a short-lived test or request process.
+
+To disable the keeper (e.g. in services that never use the in-memory adapter):
+
+```elixir
+config :ex_launch_dark, :start_in_memory_adapter, false
+```
+
+When disabled, any call to `InMemoryAdapter` raises a clear `RuntimeError`
+rather than silently creating an unowned table.
+
+#### Scope configuration
+
+By default, flag overrides are shared globally across all processes:
+
+```elixir
+config :ex_launch_dark, :in_memory_adapter_scope, :global  # default
+```
+
+For concurrent test suites, use `:process` scope to store each override
+under the calling process's PID, giving every test process an independent set of overrides:
+
+```elixir
+config :ex_launch_dark, :in_memory_adapter_scope, :process
+```
+
+Under `:process` scope, child or spawned processes do **not** inherit the
+parent's overrides because lookups use `self()` as part of the ETS key.
+
+#### Cleanup behavior
+
+| Scope      | API                                       |
+|------------|-------------------------------------------|
+| `:global`  | `InMemoryAdapter.clear_flags/0`           |
+| `:process` | `InMemoryAdapter.clear_flags_for(self())` |
+
+`clear_flags/0` intentionally raises `ArgumentError` in `:process` scope to
+prevent one process from wiping every other process's overrides. Use
+`clear_flags_for/1` instead.
+
+#### Custom table name
+
+The table name is read by `TableKeeper` once at startup. Configure it before
+the keeper starts (typically in `config/test.exs`):
+
+```elixir
+config :ex_launch_dark, :in_memory_adapter_table, :my_custom_table
+```
+
+Changing this setting after the keeper has started has no effect on the
+running table.
+
 #### Example usage
 
 ```elixir
-# Enable the in-memory adapter in your application config (compile time)
+# Point your application at the in-memory adapter (compile time)
 config :my_app, :feature_flags_adapter, ExLaunchDark.InMemoryAdapter
 
 # Override a flag value
@@ -137,8 +194,11 @@ ExLaunchDark.InMemoryAdapter.enable("example-feature-flag")
 # Disable a flag
 ExLaunchDark.InMemoryAdapter.disable("example-feature-flag")
 
-# Clear all overrides
+# Clear all overrides (global scope only)
 ExLaunchDark.InMemoryAdapter.clear_flags()
+
+# Clear overrides for a specific process (process scope)
+ExLaunchDark.InMemoryAdapter.clear_flags_for(self())
 ```
 
 Externally defined adapters must implement the `ExLaunchDark.Adapter` behaviour, which defines the
