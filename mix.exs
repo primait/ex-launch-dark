@@ -4,7 +4,7 @@ defmodule ExLaunchDark.MixProject do
   def project do
     [
       app: :ex_launch_dark,
-      version: "2.0.0",
+      version: "2.0.1",
       elixir: "~> 1.18",
       package: package(),
       start_permanent: Mix.env() == :prod,
