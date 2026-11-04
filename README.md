@@ -36,6 +36,18 @@ config :ex_launch_dark, :project_key_n, "sdk-xxxxx-yyyyy-zzzzzzz-22222"
 
 ## Usage
 
+### CLI utils
+
+In order to ease some of the common development tasks, you can use any of the "commands/tasks"
+defined in the `mise.toml` file, like:
+
+```bash
+mise start 
+mise test
+mise code:check 
+mise code:format
+```
+
 To start using the library main functions you can start playing with the `ExLaunchDark.LDAdapter` module.
 Which exposes some of the most common flag operations, like:
 
@@ -204,7 +216,7 @@ ExLaunchDark.InMemoryAdapter.clear_flags_for(self())
 Externally defined adapters must implement the `ExLaunchDark.Adapter` behaviour, which defines the
 `get_feature_flag_value/4` callback used for flag evaluation.
 
-### Real local tests 
+### Local tests (sandbox) 
 
 To experiment against the real LaunchDarkly service, you need to define the necessary configuration for any real LD project 
 so the library can connect to it, and perform the operations predefined. 
@@ -224,18 +236,6 @@ ExLaunchDark.LDSandbox.get_flag_value_context_kind(:project_key_1, "flag_foo", "
 
 # Would get you the value of "flag_foo" using a fully predefined context
 ExLaunchDark.LDSandbox.get_flag_value_fixed_context(:project_key_1, "flag_foo", "user", "user_key_123", %{"foo" => "bar"})
-```
-
-### Application CLI utils
-
-In order to ease some of the common development tasks, you can use any of the "commands/tasks"
-defined in the `mise.toml` file, like:
-
-```bash
-mise start 
-mise test
-mise code:check 
-mise code:format
 ```
 
 ## Release
